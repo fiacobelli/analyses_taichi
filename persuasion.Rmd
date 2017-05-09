@@ -88,7 +88,7 @@ d <- cbind(c("Pre","Post"),c(interest.pre,interest.post))
 
 And then, a prettier plot:
 ```{r}
-qplot(x=c("Pre","Post"),weight=c(interest.pre,interest.post))
+qplot(x=c("Pre","Post"),weight=c(interest.pre,interest.post),xlab="Survey")
 ```
 And a t-test:
 ```{r}
