@@ -13,6 +13,8 @@ First load the file and libraries.
 library(readr)
 library(ggplot2)
 ```
+
+
 When loading the files, remember to change the path to the directories in your computer.
 ```{r, include=FALSE }
 Dialogue <- read_csv("Dialogue.csv")
@@ -262,19 +264,25 @@ for (s in  raw_merged$sessionID) {
   ep.count <- append(ep.count,length(Dialogue[Dialogue$sessionID == s & Dialogue$speaker=="HG" & substr(Dialogue$q_id, 1, 2) == "EP",]$sessionID))
   rp.count <- append(rp.count,length(Dialogue[Dialogue$sessionID == s & Dialogue$speaker=="HG" & substr(Dialogue$q_id, 1, 2) == "RP",]$sessionID))
 }
-
-  cor.test(en.count, raw_merged$taichi_interest)
-  cor.test(ep.count, raw_merged$taichi_interest)
-  cor.test(rn.count, raw_merged$taichi_interest)
-  cor.test(rp.count, raw_merged$taichi_interest)
   
-  cor.test(en.count, raw_merged$taichi_learn)
+  cor.test(ep.count, raw_merged$taichi_interest)
+  cor.test(rp.count, raw_merged$taichi_interest)
+  cor.test(en.count, raw_merged$taichi_interest)
+  cor.test(rn.count, raw_merged$taichi_interest)
+  
   cor.test(ep.count, raw_merged$taichi_learn)
-  cor.test(rn.count, raw_merged$taichi_learn)
   cor.test(rp.count, raw_merged$taichi_learn)
+  cor.test(en.count, raw_merged$taichi_learn)
+  cor.test(rn.count, raw_merged$taichi_learn)
 
 ```
 
 
-
+```{r}
+Strategy <- c("EP", "RP", "EN", "RN" )
+Taichi.Interest.pre <- c(-0.2744292,0.1919599,-0.1324932,0.2541909 )
+Taichi.Interest.post <- c(-0.4554372,0.1109431,-0.3339051,0.245545)
+df <- data.frame(Strategy,Taichi.Interest.pre, Taichi.Interest.post)
+knitr::kable(head(df))
+```
 
