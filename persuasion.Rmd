@@ -33,7 +33,7 @@ post<-post[post$sessionID %in% pre.good$sessionID,]
 
 #Exclude those before Feb 23
 pp<-Dialogue[Dialogue$sessionID %in% pre.good$sessionID,c("time","sessionID")]
-pp.beforeFeb <- pp[c(67:2202),]
+pp.beforeFeb <- pp[c(34,length(pp$time)),]
 pre.good.sid<-unique(unlist(pre.good$sessionID, use.names = FALSE))
 
 #View(pre.good)
@@ -80,10 +80,10 @@ table(pre.good$age_range)/length(pre.good$age_range)
 
 We can also assign variables based on computations. For example, I will assign a number for the average **TaiChi interest** in the pre-survey, and one for the post-survey. Then I will plot them.
 ```{r}
-interest.pre <- mean(dems$taichi_interest)
+interest.pre <- mean(pre.good$taichi_interest)
 interest.post<- mean(post$taichi_learn)
 barplot(c(interest.pre,interest.post))
-d <- cbind(c("Pre","Post"),c(interest.pre,interest.post))
+d <- rbind(c("Pre","Post"),c(interest.pre,interest.post))
 ```
 
 And then, a prettier plot:
