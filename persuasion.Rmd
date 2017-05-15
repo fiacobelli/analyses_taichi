@@ -122,18 +122,26 @@ Demographics stats - Now we check basic demographics: Grad/U-Grad/Staff; Ethnici
 * 6:Other
 
 ```{r}
-table(pre.good$position)
-table(pre.good$gender)
-table(pre.good$ethnicity)
-table(pre.good$age_range)
+t.pos<-table(pre.good$position)
+t.gender<-table(pre.good$gender)
+t.eth<-table(pre.good$ethnicity)
+t.age<-table(pre.good$age_range)
+names(t.pos)<-c("Ugrad","Grad","Faculty","Staff")
+names(t.gender)<-c("F","M","Other")
+names(t.eth)<-c("Cau","Hisp","ME","Pac","AA","other")
+names(t.age)<-c("18-21","22-25","26-30","31-40","41-50")
+t.pos
+t.gender
+t.eth
+t.age
 ```
 
 Now, in percentages:
 ```{r}
-table(pre.good$position)/length(pre.good$position)
-table(pre.good$gender)/length(pre.good$gender)
-table(pre.good$ethnicity)/length(pre.good$ethnicity)
-table(pre.good$age_range)/length(pre.good$age_range)
+t.pos/length(pre.good$position)
+t.gender/length(pre.good$gender)
+t.eth/length(pre.good$ethnicity)
+t.age/length(pre.good$age_range)
 ```
 
 What percentage of people were under 40 years old?
@@ -165,7 +173,7 @@ d <- rbind(c("Pre","Post"),c(interest.pre,interest.post))
 ```
 
 Taichi interest table
-```{r}
+```{r, echo=FALSE}
 raw_merged = merge(x = pre.good, y = post, by = "sessionID", all = TRUE)
 
 printed.decreased.interest <- length(raw_merged[raw_merged$taichi_learn < raw_merged$taichi_interest & raw_merged$printed_flyer == 1,]$sessionID)
