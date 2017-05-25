@@ -33,12 +33,14 @@ pre.good<-dems[dems$sessionID %in% post$sessionID,]
 # Exclude test users
 pre.good<-pre.good[pre.good$userType!="test",]
 post<-post[post$sessionID %in% pre.good$sessionID,]
-
+```
+```{r}
 #Exclude those before Feb 23
 pp<-Dialogue[Dialogue$sessionID %in% pre.good$sessionID,c("time","sessionID")]
 pp.beforeFeb <- pp[c(34,length(pp$time)),]
 pre.good.sid<-unique(unlist(pre.good$sessionID, use.names = FALSE))
-
+pre.good<-pre.good[pre.good$sessionID%in%pre.good.sid,]
+post<-post[post$sessionID %in% pre.good$sessionID,]
 #View(pre.good)
 ```
 
@@ -52,22 +54,18 @@ d <- cbind(c("Pre","Post"),c(interest.pre,interest.post))
 
 And then, a prettier plot:
 ```{r}
-qplot(x=c("Pre","Post"),weight=c(interest.pre,interest.post),xlab="Survey")
+qplot(x=c("Pre","Post"),weight=c(interest.pre,interest.post),xlab="Survey", ylab="Score") + scale_x_discrete(limits=c("Pre","Post"))
 ```
 And a t-test:
 ```{r}
 t.test(pre.good$taichi_interest,post$taichi_learn,paired=TRUE)
 ```
-###More complicated selections of variables
-Let's see what is the usage of strategies in one user (identified by session ID.)
-
-```{r}
-barplot(table(Dialogue$strategy[Dialogue$sessionID=="ceprtq01ps0n5q92h8r74emid4" & Dialogue$speaker=="U"]))
-```
 
 Did the system understand the users?
 ```{r}
-qplot(data=post, x=guru_understanding, binwidth=1, xlab="1=Strongly Disagree, 5=Totally agree",main="HG Understood me")
+qplot(data=post, x=guru_understanding, binwidth=1, xlab="1=Strongly Disagree, 5=Totally agree",main="HG Understood me", ylab="Frequency")
+# and a summary
+summary(post$guru_understanding)
 ```
 
 ###Running previous research analyisis on new data
@@ -127,7 +125,7 @@ t.gender<-table(pre.good$gender)
 t.eth<-table(pre.good$ethnicity)
 t.age<-table(pre.good$age_range)
 names(t.pos)<-c("Ugrad","Grad","Faculty","Staff")
-names(t.gender)<-c("F","M","Other")
+names(t.gender)<-c("M","F","Other")
 names(t.eth)<-c("Cau","Hisp","ME","Pac","AA","other")
 names(t.age)<-c("18-21","22-25","26-30","31-40","41-50")
 t.pos
@@ -165,16 +163,18 @@ Compare post and pre chat interest in learning taichi
 
 ```{r}
 pre.interest <- pre.good$taichi_interest
-post.interest <- - post$taichi_learn
+post.interest <-post$taichi_learn
+cols.names <- c("Pre","Post")
 t.test(pre.interest,post.interest,paired=TRUE)
-barplot(c(pre.interest,post.interest))
-d <- rbind(c("Pre","Post"),c(interest.pre,interest.post))
-
+qplot(x=cols.names,weight=c(mean(pre.interest),mean(post.interest)),xlab="Survey", ylab="Score", fill=cols.names) + scale_x_discrete(limits=cols.names)+
+  geom_bar(colour="black") +
+  guides(fill=FALSE)
 ```
 
 Taichi interest table
 ```{r, echo=FALSE}
 raw_merged = merge(x = pre.good, y = post, by = "sessionID", all = TRUE)
+raw_merged$tai_chi_interest_delta<-raw_merged$taichi_learn-raw_merged$taichi_interest
 
 printed.decreased.interest <- length(raw_merged[raw_merged$taichi_learn < raw_merged$taichi_interest & raw_merged$printed_flyer == 1,]$sessionID)
 
@@ -188,16 +188,21 @@ nprinted.increased.interest <- length(raw_merged[raw_merged$taichi_learn > raw_m
 
 nprinted.same.interest <- length(raw_merged[raw_merged$taichi_learn == raw_merged$taichi_interest & raw_merged$printed_flyer == 0,]$sessionID)
 
-c1 <- c("", "Decreased", "Remained Same", "Increased", "Total")
+t.rows <- c("Decreased", "Remained Same", "Increased", "Total")
+t.cols <- c("No","Yes","Total")
 
-c2 <- c ("No", nprinted.decreased.interest, nprinted.same.interest, nprinted.increased.interest, nprinted.decreased.interest + nprinted.same.interest + nprinted.increased.interest)
+t.data.1 <- c(nprinted.decreased.interest, nprinted.same.interest, nprinted.increased.interest, nprinted.decreased.interest + nprinted.same.interest + nprinted.increased.interest)
 
-c3 <- c ("Yes", printed.decreased.interest, printed.same.interest, printed.increased.interest, printed.decreased.interest + printed.same.interest + printed.increased.interest)
+t.data.2<- c(printed.decreased.interest, printed.same.interest, printed.increased.interest, printed.decreased.interest + printed.same.interest + printed.increased.interest)
 
-c4 <- c ("Total", printed.decreased.interest + nprinted.decreased.interest, printed.same.interest + nprinted.same.interest, printed.increased.interest+nprinted.increased.interest, length(pre.good$sessionID))
+t.data.3 <- c ( printed.decreased.interest + nprinted.decreased.interest, printed.same.interest + nprinted.same.interest, printed.increased.interest+nprinted.increased.interest, length(pre.good$sessionID))
 
-print.interest <- data.frame(c1, c2, c3, c4) 
-View(print.interest)
+m <- cbind(t.data.1,t.data.2)
+m <- cbind(m,t.data.3)
+colnames(m) <- t.cols
+rownames(m) <- t.rows
+
+knitr::kable(as.data.frame(m),row.names=T)
 ```
 
 Creating PINT Group variables
@@ -213,8 +218,9 @@ npint.merged <-raw_merged[raw_merged$taichi_learn <= raw_merged$taichi_interest 
 
 Out of the people who printed, how many had an increased interest in taichi post chat?
 ```{r}
-length(pint.merged$sessionID)
-length(printed.pre$sessionID)
+a<-length(pint.merged$sessionID)
+b<-length(printed.pre$sessionID)
+a/b*100
 ```
 
 Out of the people who printed, what was the percentage of people who had an increased interest in taichi post chat?
