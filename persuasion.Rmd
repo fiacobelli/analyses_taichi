@@ -46,13 +46,15 @@ We can also assign variables based on computations. For example, I will assign a
 ```{r}
 interest.pre <- mean(dems$taichi_interest)
 interest.post<- mean(post$taichi_learn)
+need.pre <- mean(dems$taichi_interest)
+need.post<- mean(post$taichi_learn)
 barplot(c(interest.pre,interest.post))
-d <- cbind(c("Pre","Post"),c(interest.pre,interest.post))
+d <- cbind(c("Need Pre","Need Post", "Interest Pre", "Interest Post"),c(need.pre,need.post,interest.pre,interest.post))
 ```
 
 And then, a prettier plot:
 ```{r}
-qplot(x=c("Pre","Post"),weight=c(interest.pre,interest.post),xlab="Survey")
+qplot(x=c("Need Excercise-Pre","Need Excercise-Post", "Taichi Interest-Pre", "Taichi Interest-Post"),weight=c(need.pre,need.post,interest.pre,interest.post),xlab="Means for Pre- and Post-Chat Statements", fill=c("red","blue","red", "blue")) 
 ```
 And a t-test:
 ```{r}
@@ -187,7 +189,7 @@ c3 <- c ("Yes", printed.decreased.interest, printed.same.interest, printed.incre
 c4 <- c ("Total", printed.decreased.interest + nprinted.decreased.interest, printed.same.interest + nprinted.same.interest, printed.increased.interest+nprinted.increased.interest, length(pre.good$sessionID))
 
 print.interest <- data.frame(c1, c2, c3, c4) 
-View(print.interest)
+
 ```
 
 Creating PINT Group variables
@@ -199,6 +201,12 @@ pint.merged <-raw_merged[raw_merged$taichi_learn > raw_merged$taichi_interest & 
 Creating nonPINT Group variables
 ```{r}
 npint.merged <-raw_merged[raw_merged$taichi_learn <= raw_merged$taichi_interest |  raw_merged$printed_flyer == 0,]
+```
+
+How many participants printed and reported an increased interest in taichi after the dialogue?
+```{r}
+length(pint.merged$sessionID)
+length(pint.merged$sessionID)/length(pre.good$sessionID) * 100
 ```
 
 Out of the people who printed, how many had an increased interest in taichi post chat?
@@ -233,12 +241,20 @@ pint.en <- c()
 npint.en <- c()
 pint.rn <- c()
 npint.rn <- c()
+pint.ep <- c()
+npint.ep <- c()
+pint.rp <- c()
+npint.rp <- c()
 for (s in pint.merged$sessionID) {
   totalDialogues <- length(Dialogue[Dialogue$sessionID == s & Dialogue$speaker=="HG",])
 
   pint.en <- append(pint.en,(length(Dialogue[Dialogue$sessionID == s & Dialogue$speaker=="HG" & substr(Dialogue$q_id, 1, 2) == "EN",]$sessionID))/ totalDialogues)
   
    pint.rn <- append(pint.rn,(length(Dialogue[Dialogue$sessionID == s & Dialogue$speaker=="HG" & substr(Dialogue$q_id, 1, 2) == "RN",]$sessionID))/ totalDialogues)
+   
+   pint.ep <- append(pint.ep,(length(Dialogue[Dialogue$sessionID == s & Dialogue$speaker=="HG" & substr(Dialogue$q_id, 1, 2) == "EP",]$sessionID))/ totalDialogues)
+  
+   pint.rp <- append(pint.rp,(length(Dialogue[Dialogue$sessionID == s & Dialogue$speaker=="HG" & substr(Dialogue$q_id, 1, 2) == "RP",]$sessionID))/ totalDialogues)
 }
 
 for (s in npint.merged$sessionID) {
@@ -247,10 +263,16 @@ for (s in npint.merged$sessionID) {
   npint.en <- append(npint.en,(length(Dialogue[Dialogue$sessionID == s & Dialogue$speaker=="HG" & substr(Dialogue$q_id, 1, 2) == "EN",]$sessionID))/ totalDialogues)
   
    npint.rn <- append(npint.rn,(length(Dialogue[Dialogue$sessionID == s & Dialogue$speaker=="HG" & substr(Dialogue$q_id, 1, 2) == "RN",]$sessionID))/ totalDialogues)
+   
+     npint.ep <- append(npint.ep,(length(Dialogue[Dialogue$sessionID == s & Dialogue$speaker=="HG" & substr(Dialogue$q_id, 1, 2) == "EP",]$sessionID))/ totalDialogues)
+  
+   npint.rp <- append(npint.rp,(length(Dialogue[Dialogue$sessionID == s & Dialogue$speaker=="HG" & substr(Dialogue$q_id, 1, 2) == "RP",]$sessionID))/ totalDialogues)
 }
 
 t.test(pint.en, npint.en)
 t.test(pint.rn, npint.rn)
+t.test(pint.ep, npint.ep)
+t.test(pint.rp, npint.rp)
 ```
 
 Find the correlation between the number of EN,EP,RP,RN utterences and pre and post taichi chat interest
@@ -288,12 +310,79 @@ df <- data.frame(Strategy,Taichi.Interest.pre, Taichi.Interest.post)
 knitr::kable(head(df))
 ```
 
-+ greater
-
+Correlation between taihi interest (post-pre/increase) and the number of ep,rp,en,rn utterences
 ```{r}
   interest.increase <-raw_merged$taichi_learn - raw_merged$taichi_interest
   cor.test(ep.count, interest.increase)
   cor.test(rp.count, interest.increase)
   cor.test(en.count, interest.increase)
   cor.test(rn.count, interest.increase)
+```
+
+Correlation between the number of emotional utterences and guru's understanding
+```{r}
+cor.test(ep.count+en.count, raw_merged$guru_understanding)
+```
+Correlation between the number of rational utterences and  guru's understanding
+```{r}
+cor.test(rp.count+rn.count, raw_merged$guru_understanding)
+```
+Correlation between increase in taichi interest and the number of emotional utterences
+```{r}
+cor.test(ep.count+en.count, interest.increase)
+```
+Correlation between increase in taichi interest and the number of rational utterences
+```{r}
+cor.test(rp.count+rn.count, interest.increase)
+```
+Correlation between increase in taichi interest and the number of positive utterences
+```{r}
+cor.test(ep.count+rp.count, interest.increase)
+```
+Correlation between increase in taichi interest and the number of negative utterences
+```{r}
+cor.test(en.count+rn.count, interest.increase)
+```
+Correlation between the need to excercise pre chat and taichi interest pre chat
+```{r}
+cor.test(raw_merged$excercise_need, raw_merged$taichi_interest)
+```
+Correlation between the need to excersice post chat and taichi interest post chat
+```{r}
+cor.test(raw_merged$post_excercise_need, raw_merged$taichi_learn)
+```
+Correlation between the need to excersice pre chat  and taichi interest post chat
+```{r}
+cor.test(raw_merged$excercise_need, raw_merged$taichi_learn)
+```
+Is the need to excercise post chat significantly higher than the need to excercise pre chat?
+```{r}
+t.test(raw_merged$post_excercise_need, raw_merged$excercise_need, alternative = "greater")
+```
+Correlation between the guru's understanding and increase in taichi interest
+```{r}
+cor.test(raw_merged$guru_understanding, interest.increase)
+```
+Correlation between the guru's understanding and post taichi interest
+```{r}
+cor.test(raw_merged$guru_understanding, raw_merged$taichi_learn)
+```
+Correlation between the guru's understanding and post need to excercise
+```{r}
+cor.test(raw_merged$guru_understanding, raw_merged$post_excercise_need)
+```
+Correlation between the guru's understanding and increase in need to excercise
+```{r}
+excercise_need.increase <-raw_merged$post_excercise_need - raw_merged$excercise_need
+cor.test(raw_merged$guru_understanding, excercise_need.increase)
+```
+
+Were there significantly more negative dialogues in NPINT groups?
+```{r}
+t.test(npint.rn+npint.en, pint.rn+pint.en, alternative = "greater")
+```
+
+Were there significantly more positive dialogues in PINT groups?
+```{r}
+t.test(pint.rp+pint.ep, npint.rp+npint.ep, alternative = "greater")
 ```
