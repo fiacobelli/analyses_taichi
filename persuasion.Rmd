@@ -386,3 +386,81 @@ Were there significantly more positive dialogues in PINT groups?
 ```{r}
 t.test(pint.rp+pint.ep, npint.rp+npint.ep, alternative = "greater")
 ```
+
+
+Why did the need to exercise decrease after chat?
+1. Interest in learning taichi substituted the decrease in the need to do to exercise?
+A. No, we found a significant correlation between the increase in the need to do exercise and interest in learning taichi. 
+
+
+```{r}
+ cor.test(raw_merged$post_excercise_need - raw_merged$excercise_need, raw_merged$taichi_learn - raw_merged$taichi_interest)
+```
+
+Q. Interest in learning taichi after the chat increased, then why did need to do exercise decrease if they both had a positive correlation?
+```{r}
+t.test(raw_merged$post_excercise_need, raw_merged$excercise_need, alternative = "greater")
+
+t.test(raw_merged$taichi_learn, raw_merged$taichi_interest, alternative = "greater")
+```
+
+2. Maybe this decrease in the "need to exercise" only happened for a certain group?
+
+
+#### Exer Type
+* 1 Aerobic
+* 2 Anaerobic
+* 3 Flexibility
+
+#### Exer Frequency
+* 1 0-1 times
+* 2 2-3 times
+* 3 4+ times
+
+
+```{r}
+aerobic <- raw_merged[raw_merged$excerise_time==1,]
+anaerobic <- raw_merged[raw_merged$excerise_time==2,]
+flexibility <- raw_merged[raw_merged$excerise_time==3,]
+
+exer_freq_0 <- raw_merged[raw_merged$excerise_freq==1,]
+exer_freq_2 <- raw_merged[raw_merged$excerise_freq==2,]
+exer_freq_4 <- raw_merged[raw_merged$excerise_freq==3,]
+```
+
+- Did the need to exercise decrease for people who do aerobic exercise?
+
+```{r}
+t.test(aerobic$post_excercise_need, aerobic$excercise_need, alternative = "greater")
+```
+
+- Did the need to exercise decrease for people who do anaerobic exercise?
+
+```{r}
+t.test(anaerobic$post_excercise_need, anaerobic$excercise_need, alternative = "greater")
+```
+
+- Did the need to exercise decrease for people who do flexibility exercise?
+
+```{r}
+t.test(flexibility$post_excercise_need, flexibility$excercise_need, alternative = "greater")
+```
+
+- Did the need to exercise decrease for people who exercise 0-1 times a week?
+
+```{r}
+t.test(exer_freq_0$post_excercise_need, exer_freq_0$excercise_need, alternative = "greater")
+```
+
+- Did the need to exercise decrease for people who exercise 2-3 times a week?
+
+```{r}
+t.test(exer_freq_2$post_excercise_need, exer_freq_2$excercise_need, alternative = "greater")
+```
+
+- Did the need to exercise decrease for people who exercise more than 4 times a week?
+
+```{r}
+t.test(exer_freq_4$post_excercise_need, exer_freq_4$excercise_need, alternative = "greater")
+```
+

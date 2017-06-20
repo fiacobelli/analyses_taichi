@@ -818,6 +818,32 @@ cor.test(raw_merged$guru_understanding, excercise_need.increase)</code></pre>
 ## sample estimates:
 ##       cor 
 ## 0.2605731</code></pre>
+<p>Were there significantly more negative dialogues in NPINT groups?</p>
+<pre class="r"><code>t.test(npint.rn+npint.en, pint.rn+pint.en, alternative = &quot;greater&quot;)</code></pre>
+<pre><code>## 
+##  Welch Two Sample t-test
+## 
+## data:  npint.rn + npint.en and pint.rn + pint.en
+## t = 0.52736, df = 31.341, p-value = 0.3008
+## alternative hypothesis: true difference in means is greater than 0
+## 95 percent confidence interval:
+##  -0.03872932         Inf
+## sample estimates:
+## mean of x mean of y 
+## 0.1603499 0.1428571</code></pre>
+<p>Were there significantly more positive dialogues in PINT groups?</p>
+<pre class="r"><code>t.test(pint.rp+pint.ep, npint.rp+npint.ep, alternative = &quot;greater&quot;)</code></pre>
+<pre><code>## 
+##  Welch Two Sample t-test
+## 
+## data:  pint.rp + pint.ep and npint.rp + npint.ep
+## t = -0.27946, df = 59.389, p-value = 0.6096
+## alternative hypothesis: true difference in means is greater than 0
+## 95 percent confidence interval:
+##  -0.1627797        Inf
+## sample estimates:
+## mean of x mean of y 
+##  1.938776  1.962099</code></pre>
 </div>
 </div>
 </div>
