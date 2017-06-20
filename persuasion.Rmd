@@ -355,9 +355,9 @@ Correlation between the need to excersice pre chat  and taichi interest post cha
 ```{r}
 cor.test(raw_merged$excercise_need, raw_merged$taichi_learn)
 ```
-Is the need to excercise post chat significantly higher than the need to excercise pre chat?
+Is the need to excercise post chat significantly different than the need to excercise pre chat?
 ```{r}
-t.test(raw_merged$post_excercise_need, raw_merged$excercise_need, alternative = "greater")
+t.test(raw_merged$post_excercise_need, raw_merged$excercise_need)
 ```
 Correlation between the guru's understanding and increase in taichi interest
 ```{r}
@@ -375,6 +375,12 @@ Correlation between the guru's understanding and increase in need to excercise
 ```{r}
 excercise_need.increase <-raw_merged$post_excercise_need - raw_merged$excercise_need
 cor.test(raw_merged$guru_understanding, excercise_need.increase)
+```
+What are the main factors that correlate with Taichi interest post.
+```{r}
+summary(lm(raw_merged$taichi_learn~raw_merged$guru_understanding+raw_merged$excercise_need +raw_merged$post_excercise_need + raw_merged$taichi_persuation+raw_merged$age_range+raw_merged$excerise_freq))
+
+
 ```
 
 Were there significantly more negative dialogues in NPINT groups?
