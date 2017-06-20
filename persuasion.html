@@ -752,7 +752,7 @@ knitr::kable(head(df))</code></pre>
 ## sample estimates:
 ##       cor 
 ## 0.4006711</code></pre>
-<p>Is the need to excercise post chat significantly higher than the need to excercise pre chat?</p>
+<p>Is the need to excercise post chat significantly different than the need to excercise pre chat?</p>
 <pre class="r"><code>t.test(raw_merged$post_excercise_need, raw_merged$excercise_need)</code></pre>
 <pre><code>## 
 ##  Welch Two Sample t-test
@@ -818,6 +818,33 @@ cor.test(raw_merged$guru_understanding, excercise_need.increase)</code></pre>
 ## sample estimates:
 ##       cor 
 ## 0.2605731</code></pre>
+<p>What are the main factors that correlate with Taichi interest post.</p>
+<pre class="r"><code>summary(lm(raw_merged$taichi_learn~raw_merged$guru_understanding+raw_merged$excercise_need +raw_merged$post_excercise_need + raw_merged$taichi_persuation+raw_merged$age_range+raw_merged$excerise_freq))</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = raw_merged$taichi_learn ~ raw_merged$guru_understanding + 
+##     raw_merged$excercise_need + raw_merged$post_excercise_need + 
+##     raw_merged$taichi_persuation + raw_merged$age_range + raw_merged$excerise_freq)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -2.4065 -0.2196  0.1207  0.3142  1.6934 
+## 
+## Coefficients:
+##                                Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)                    -0.60023    0.60426  -0.993  0.32482    
+## raw_merged$guru_understanding  -0.03469    0.09087  -0.382  0.70410    
+## raw_merged$excercise_need       0.04208    0.10307   0.408  0.68465    
+## raw_merged$post_excercise_need  0.32936    0.10536   3.126  0.00281 ** 
+## raw_merged$taichi_persuation    0.69543    0.09376   7.417 7.07e-10 ***
+## raw_merged$age_range           -0.02005    0.08369  -0.240  0.81151    
+## raw_merged$excerise_freq        0.24954    0.12721   1.962  0.05478 .  
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 0.6942 on 56 degrees of freedom
+## Multiple R-squared:  0.7585, Adjusted R-squared:  0.7327 
+## F-statistic: 29.32 on 6 and 56 DF,  p-value: 1.344e-15</code></pre>
 <p>Were there significantly more negative dialogues in NPINT groups?</p>
 <pre class="r"><code>t.test(npint.rn+npint.en, pint.rn+pint.en, alternative = &quot;greater&quot;)</code></pre>
 <pre><code>## 
@@ -844,6 +871,160 @@ cor.test(raw_merged$guru_understanding, excercise_need.increase)</code></pre>
 ## sample estimates:
 ## mean of x mean of y 
 ##  1.938776  1.962099</code></pre>
+<p>Why did the need to exercise decrease after chat? 1. Interest in learning taichi substituted the decrease in the need to do to exercise? A. No, we found a significant correlation between the increase in the need to do exercise and interest in learning taichi.</p>
+<pre class="r"><code> cor.test(raw_merged$post_excercise_need - raw_merged$excercise_need, raw_merged$taichi_learn - raw_merged$taichi_interest)</code></pre>
+<pre><code>## 
+##  Pearson's product-moment correlation
+## 
+## data:  raw_merged$post_excercise_need - raw_merged$excercise_need and raw_merged$taichi_learn - raw_merged$taichi_interest
+## t = 2.5262, df = 61, p-value = 0.01414
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  0.06493149 0.51615456
+## sample estimates:
+##       cor 
+## 0.3077456</code></pre>
+<p>Q. Interest in learning taichi after the chat increased, then why did need to do exercise decrease if they both had a positive correlation?</p>
+<pre class="r"><code>t.test(raw_merged$post_excercise_need, raw_merged$excercise_need, alternative = &quot;greater&quot;)</code></pre>
+<pre><code>## 
+##  Welch Two Sample t-test
+## 
+## data:  raw_merged$post_excercise_need and raw_merged$excercise_need
+## t = -2.2292, df = 118.18, p-value = 0.9862
+## alternative hypothesis: true difference in means is greater than 0
+## 95 percent confidence interval:
+##  -0.7749832        Inf
+## sample estimates:
+## mean of x mean of y 
+##  3.714286  4.158730</code></pre>
+<pre class="r"><code>t.test(raw_merged$taichi_learn, raw_merged$taichi_interest, alternative = &quot;greater&quot;)</code></pre>
+<pre><code>## 
+##  Welch Two Sample t-test
+## 
+## data:  raw_merged$taichi_learn and raw_merged$taichi_interest
+## t = 2.4913, df = 123.06, p-value = 0.007029
+## alternative hypothesis: true difference in means is greater than 0
+## 95 percent confidence interval:
+##  0.1912912       Inf
+## sample estimates:
+## mean of x mean of y 
+##  3.507937  2.936508</code></pre>
+<ol start="2" style="list-style-type: decimal">
+<li>Maybe this decrease in the “need to exercise” only happened for a certain group?</li>
+</ol>
+</div>
+<div id="exer-type" class="section level4">
+<h4>Exer Type</h4>
+<ul>
+<li>1 Aerobic</li>
+<li>2 Anaerobic</li>
+<li>3 Flexibility</li>
+</ul>
+</div>
+<div id="exer-frequency" class="section level4">
+<h4>Exer Frequency</h4>
+<ul>
+<li>1 0-1 times</li>
+<li>2 2-3 times</li>
+<li>3 4+ times</li>
+</ul>
+<pre class="r"><code>aerobic &lt;- raw_merged[raw_merged$excerise_time==1,]
+anaerobic &lt;- raw_merged[raw_merged$excerise_time==2,]
+flexibility &lt;- raw_merged[raw_merged$excerise_time==3,]
+
+exer_freq_0 &lt;- raw_merged[raw_merged$excerise_freq==1,]
+exer_freq_2 &lt;- raw_merged[raw_merged$excerise_freq==2,]
+exer_freq_4 &lt;- raw_merged[raw_merged$excerise_freq==3,]</code></pre>
+<ul>
+<li>Did the need to exercise decrease for people who do aerobic exercise?</li>
+</ul>
+<pre class="r"><code>t.test(aerobic$post_excercise_need, aerobic$excercise_need, alternative = &quot;greater&quot;)</code></pre>
+<pre><code>## 
+##  Welch Two Sample t-test
+## 
+## data:  aerobic$post_excercise_need and aerobic$excercise_need
+## t = -1.9188, df = 76.544, p-value = 0.9706
+## alternative hypothesis: true difference in means is greater than 0
+## 95 percent confidence interval:
+##  -0.8199789        Inf
+## sample estimates:
+## mean of x mean of y 
+##  3.731707  4.170732</code></pre>
+<ul>
+<li>Did the need to exercise decrease for people who do anaerobic exercise?</li>
+</ul>
+<pre class="r"><code>t.test(anaerobic$post_excercise_need, anaerobic$excercise_need, alternative = &quot;greater&quot;)</code></pre>
+<pre><code>## 
+##  Welch Two Sample t-test
+## 
+## data:  anaerobic$post_excercise_need and anaerobic$excercise_need
+## t = -1.25, df = 32.617, p-value = 0.8899
+## alternative hypothesis: true difference in means is greater than 0
+## 95 percent confidence interval:
+##  -1.307971       Inf
+## sample estimates:
+## mean of x mean of y 
+##  3.444444  4.000000</code></pre>
+<ul>
+<li>Did the need to exercise decrease for people who do flexibility exercise?</li>
+</ul>
+<pre class="r"><code>t.test(flexibility$post_excercise_need, flexibility$excercise_need, alternative = &quot;greater&quot;)</code></pre>
+<pre><code>## 
+##  Welch Two Sample t-test
+## 
+## data:  flexibility$post_excercise_need and flexibility$excercise_need
+## t = 0, df = 6, p-value = 0.5
+## alternative hypothesis: true difference in means is greater than 0
+## 95 percent confidence interval:
+##  -0.687018       Inf
+## sample estimates:
+## mean of x mean of y 
+##      4.75      4.75</code></pre>
+<ul>
+<li>Did the need to exercise decrease for people who exercise 0-1 times a week?</li>
+</ul>
+<pre class="r"><code>t.test(exer_freq_0$post_excercise_need, exer_freq_0$excercise_need, alternative = &quot;greater&quot;)</code></pre>
+<pre><code>## 
+##  Welch Two Sample t-test
+## 
+## data:  exer_freq_0$post_excercise_need and exer_freq_0$excercise_need
+## t = -0.8824, df = 53.753, p-value = 0.8093
+## alternative hypothesis: true difference in means is greater than 0
+## 95 percent confidence interval:
+##  -0.6759101        Inf
+## sample estimates:
+## mean of x mean of y 
+##  4.033333  4.266667</code></pre>
+<ul>
+<li>Did the need to exercise decrease for people who exercise 2-3 times a week?</li>
+</ul>
+<pre class="r"><code>t.test(exer_freq_2$post_excercise_need, exer_freq_2$excercise_need, alternative = &quot;greater&quot;)</code></pre>
+<pre><code>## 
+##  Welch Two Sample t-test
+## 
+## data:  exer_freq_2$post_excercise_need and exer_freq_2$excercise_need
+## t = -1.8815, df = 40.991, p-value = 0.9665
+## alternative hypothesis: true difference in means is greater than 0
+## 95 percent confidence interval:
+##  -1.153122       Inf
+## sample estimates:
+## mean of x mean of y 
+##  3.565217  4.173913</code></pre>
+<ul>
+<li>Did the need to exercise decrease for people who exercise more than 4 times a week?</li>
+</ul>
+<pre class="r"><code>t.test(exer_freq_4$post_excercise_need, exer_freq_4$excercise_need, alternative = &quot;greater&quot;)</code></pre>
+<pre><code>## 
+##  Welch Two Sample t-test
+## 
+## data:  exer_freq_4$post_excercise_need and exer_freq_4$excercise_need
+## t = -1.1649, df = 17.877, p-value = 0.8703
+## alternative hypothesis: true difference in means is greater than 0
+## 95 percent confidence interval:
+##  -1.742432       Inf
+## sample estimates:
+## mean of x mean of y 
+##       3.1       3.8</code></pre>
 </div>
 </div>
 </div>

@@ -407,10 +407,14 @@ Q. Interest in learning taichi after the chat increased, then why did need to do
 ```{r}
 t.test(raw_merged$post_excercise_need, raw_merged$excercise_need, alternative = "greater")
 
-t.test(raw_merged$taichi_learn, raw_merged$taichi_interest, alternative = "greater")
+t.test(raw_merged$taichi_learn, raw_merged$taichi_interest, alternative = "greater",paired=T)
 ```
 
 2. Maybe this decrease in the "need to exercise" only happened for a certain group?
+```{r}
+plot(raw_merged$taichi_learn-raw_merged$taichi_interest,raw_merged$post_excercise_need-raw_merged$excercise_need,xlab="Taichi Interest delta",ylab="exercise need delta")
+```
+
 
 
 #### Exer Type
@@ -437,19 +441,19 @@ exer_freq_4 <- raw_merged[raw_merged$excerise_freq==3,]
 - Did the need to exercise decrease for people who do aerobic exercise?
 
 ```{r}
-t.test(aerobic$post_excercise_need, aerobic$excercise_need, alternative = "greater")
+t.test(aerobic$post_excercise_need, aerobic$excercise_need, alternative = "greater",paired=T)
 ```
 
 - Did the need to exercise decrease for people who do anaerobic exercise?
 
 ```{r}
-t.test(anaerobic$post_excercise_need, anaerobic$excercise_need, alternative = "greater")
+t.test(anaerobic$post_excercise_need, anaerobic$excercise_need, alternative = "greater",paired=T)
 ```
 
 - Did the need to exercise decrease for people who do flexibility exercise?
 
 ```{r}
-t.test(flexibility$post_excercise_need, flexibility$excercise_need, alternative = "greater")
+t.test(flexibility$post_excercise_need, flexibility$excercise_need, alternative = "greater",paired=T)
 ```
 
 - Did the need to exercise decrease for people who exercise 0-1 times a week?
