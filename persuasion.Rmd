@@ -474,3 +474,9 @@ t.test(exer_freq_2$post_excercise_need, exer_freq_2$excercise_need, alternative 
 t.test(exer_freq_4$post_excercise_need, exer_freq_4$excercise_need, alternative = "greater")
 ```
 
+Now, let's explore TaiChi persuasion with reports of the guru understanding the users.
+```{r}
+cor.test(raw_merged$guru_understanding, raw_merged$taichi_persuation)
+plot(raw_merged$guru_understanding, raw_merged$taichi_persuation)
+```
+
