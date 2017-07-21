@@ -12,6 +12,7 @@ First load the file and libraries.
 ```{r}
 library(readr)
 library(ggplot2)
+library(tidyr)
 ```
 
 
@@ -190,6 +191,9 @@ c4 <- c ("Total", printed.decreased.interest + nprinted.decreased.interest, prin
 
 print.interest <- data.frame(c1, c2, c3, c4) 
 
+#Also, just so we keep this in its own column:
+raw_merged$increased_taichi_interest=raw_merged$taichi_interest<raw_merged$taichi_learn
+
 ```
 
 Creating PINT Group variables
@@ -351,7 +355,7 @@ Correlation between the need to excersice post chat and taichi interest post cha
 ```{r}
 cor.test(raw_merged$post_excercise_need, raw_merged$taichi_learn)
 ```
-Correlation between the need to excersice pre chat  and taichi interest post chat
+Correlation between the need to excercise pre chat  and taichi interest post chat
 ```{r}
 cor.test(raw_merged$excercise_need, raw_merged$taichi_learn)
 ```
@@ -477,6 +481,38 @@ t.test(exer_freq_4$post_excercise_need, exer_freq_4$excercise_need, alternative 
 Now, let's explore TaiChi persuasion with reports of the guru understanding the users.
 ```{r}
 cor.test(raw_merged$guru_understanding, raw_merged$taichi_persuation)
-plot(raw_merged$guru_understanding, raw_merged$taichi_persuation)
+qplot(raw_merged$guru_understanding, raw_merged$taichi_persuation,geom=c("smooth","point"))+
+  geom_smooth(method='lm',formula=y~x)
 ```
+
+Finally, let's look at who's persuaded by the dialogue system. The graph below illustrates the average interest in doing tai chi pre and post based on the type of exercise reported.
+
+```{r exerciseTypeByInterest}
+d<-gather(raw_merged,interest,value,taichi_interest,taichi_learn)
+ggplot(data=d,aes(x=excerise_time,y=value,fill=interest)) +
+  geom_bar(stat="summary",position="dodge") +
+  labs(title="Change of Interest in TaiChi by Exercise Type",y="Mean Interest in TaiChi")+
+  scale_x_continuous(name="Exercise Type", breaks=c(1,2,3), labels=c("Aerobic","Anaerobic","Flexibiliy")) +
+  scale_fill_discrete(name="Interest Tested",labels=c("Pre","Post"))
+```
+
+Now, are these differences significant?
+
+```{r}
+t.test(aerobic$taichi_persuation,anaerobic$taichi_persuation,alternative="greater")
+
+t.test(anaerobic$tachi_persuasion)
+```
+
+Finally, let's look at who's persuaded by the dialogue system. The graph below illustrates the average interest in doing tai chi pre and post based on the frequency of exercise reported.
+
+```{r exerciseFreqByInterest}
+d<-gather(raw_merged,interest,value,taichi_interest,taichi_learn)
+ggplot(data=d,aes(x=excerise_freq,y=value,fill=interest)) +
+  geom_bar(stat="summary",position="dodge") +
+  labs(title="Change of Interest in TaiChi by Exercise Frequency",y="Mean Interest in TaiChi")+
+  scale_x_continuous(name="Exercise Frequency (times/week)",breaks=c(1,2,3),labels=c("0-1","2-4","4+")) +
+  scale_fill_discrete(name="Interest Tested",labels=c("Pre","Post"))
+```
+
 
