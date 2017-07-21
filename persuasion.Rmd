@@ -497,11 +497,17 @@ ggplot(data=d,aes(x=excerise_time,y=value,fill=interest)) +
 ```
 
 Now, are these differences significant?
+```{r differencesPrePostByEx}
+t.test(aerobic$taichi_interest,aerobic$taichi_learn,paired=T,alternative="less")
+
+t.test(anaerobic$taichi_interest,anaerobic$taichi_learn,paired=T,alternative="less")
+```
+
+And are the reports of persuation for different kinds of exercise different for each population?
 
 ```{r}
 t.test(aerobic$taichi_persuation,anaerobic$taichi_persuation,alternative="greater")
-
-t.test(anaerobic$tachi_persuasion)
+t.test(aerobic$taichi_learn,anaerobic$taichi_learn)
 ```
 
 Finally, let's look at who's persuaded by the dialogue system. The graph below illustrates the average interest in doing tai chi pre and post based on the frequency of exercise reported.
